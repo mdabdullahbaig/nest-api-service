@@ -107,21 +107,6 @@ paths:
                     type: string
         '404':
           description: Product not found
-  /users:
-    get:
-      summary: Retrieve all users
-      responses:
-        '200':
-          description: A list of users
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  users:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/User'
     post:
       summary: Create a new user
       requestBody:
@@ -139,6 +124,21 @@ paths:
                 $ref: '#/components/schemas/User'
         '400':
           description: Validation error or user already exists
+  /users:
+    get:
+      summary: Retrieve all users
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
   /users/{id}:
     get:
       summary: Retrieve a user by ID
