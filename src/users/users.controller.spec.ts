@@ -14,6 +14,8 @@ describe('UsersController', () => {
   // Mock implementation of UsersService
   const mockUsersService = {
     createUser: jest.fn(),
+    findAllUsers: jest.fn(),
+    findUserById: jest.fn(),
   };
 
   /**
@@ -149,6 +151,116 @@ describe('UsersController', () => {
         usersController.createUser(invalidDto as CreateUserDto),
       ).rejects.toThrow(BadRequestException);
       expect(mockUsersService.createUser).toHaveBeenCalledWith(invalidDto);
+    });
+  });
+
+  describe('findAllUsers', () => {
+    /**
+     * Should return an array of users
+     */
+    it('should return an array of users', async () => {
+      const users = [
+        {
+          _id: '1',
+          email: 'user1@mail.com',
+          password: 'pass',
+          firstName: 'User',
+          lastName: 'One',
+          phone: '1234567890',
+        },
+        {
+          _id: '2',
+          email: 'user2@mail.com',
+          password: 'pass',
+          firstName: 'User',
+          lastName: 'Two',
+          phone: '0987654321',
+        },
+      ];
+      mockUsersService.findAllUsers = jest.fn().mockResolvedValue(users);
+      expect(await usersController.findAllUsers()).toEqual(users);
+      expect(mockUsersService.findAllUsers).toHaveBeenCalled();
+    });
+
+    /**
+     * Should return an empty array if no users exist
+     */
+    it('should return an empty array if no users exist', async () => {
+      mockUsersService.findAllUsers = jest.fn().mockResolvedValue([]);
+      expect(await usersController.findAllUsers()).toEqual([]);
+      expect(mockUsersService.findAllUsers).toHaveBeenCalled();
+    });
+
+    /**
+     * Should throw error if service throws
+     */
+    it('should throw error if service throws', async () => {
+      mockUsersService.findAllUsers = jest
+        .fn()
+        .mockRejectedValue(new Error('Database error'));
+      await expect(usersController.findAllUsers()).rejects.toThrow(
+        'Database error',
+      );
+      expect(mockUsersService.findAllUsers).toHaveBeenCalled();
+    });
+  });
+
+  describe('getUserById', () => {
+    /**
+     * Should return a user by ID
+     */
+    it('should return a user by ID', async () => {
+      const user = {
+        _id: '1',
+        email: 'user1@mail.com',
+        password: 'pass',
+        firstName: 'User',
+        lastName: 'One',
+        phone: '1234567890',
+      };
+      mockUsersService.findUserById = jest.fn().mockResolvedValue(user);
+      expect(await usersController.getUserById('1')).toEqual(user);
+      expect(mockUsersService.findUserById).toHaveBeenCalledWith('1');
+    });
+
+    /**
+     * Should throw BadRequestException if user not found
+     */
+    it('should throw BadRequestException if user not found', async () => {
+      mockUsersService.findUserById = jest
+        .fn()
+        .mockRejectedValue(new BadRequestException('User not found!'));
+      await expect(usersController.getUserById('999')).rejects.toThrow(
+        BadRequestException,
+      );
+      expect(mockUsersService.findUserById).toHaveBeenCalledWith('999');
+    });
+
+    /**
+     * Should throw BadRequestException if ID format is invalid
+     */
+    it('should throw BadRequestException if ID format is invalid', async () => {
+      // Simulate service throwing a validation error for invalid ID format
+      mockUsersService.findUserById = jest
+        .fn()
+        .mockRejectedValue(new BadRequestException('Invalid user ID format'));
+      await expect(usersController.getUserById('invalid-id')).rejects.toThrow(
+        BadRequestException,
+      );
+      expect(mockUsersService.findUserById).toHaveBeenCalledWith('invalid-id');
+    });
+
+    /**
+     * Should throw error if service throws
+     */
+    it('should throw error if service throws', async () => {
+      mockUsersService.findUserById = jest
+        .fn()
+        .mockRejectedValue(new Error('Database error'));
+      await expect(usersController.getUserById('1')).rejects.toThrow(
+        'Database error',
+      );
+      expect(mockUsersService.findUserById).toHaveBeenCalledWith('1');
     });
   });
 });

@@ -48,4 +48,43 @@ export class UsersService {
       throw new Error(`Error creating user: ${error.message}`);
     }
   }
+
+  /**
+   * Retrieves all users from the database.
+   * @returns Promise resolving to an array of user documents
+   * @throws Error if there is a database or other error
+   */
+  async findAllUsers(): Promise<User[]> {
+    try {
+      // Fetch all users from the database
+      return await this.userModel.find().exec();
+    } catch (error) {
+      throw new Error(`Error fetching users: ${error.message}`);
+    }
+  }
+
+  /**
+   * Retrieves a user by their ID from the database.
+   * Throws BadRequestException if user is not found.
+   * @param id - The unique identifier of the user
+   * @returns Promise resolving to the user document
+   * @throws BadRequestException if user is not found
+   * @throws Error if there is a database or other error
+   */
+  async findUserById(id: string): Promise<User> {
+    try {
+      // Fetch user by ID from the database
+      const user = await this.userModel.findById(id).exec();
+      if (!user) {
+        // If user is not found, throw BadRequestException
+        throw new BadRequestException('User not found!');
+      }
+      return user;
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new Error(`Error fetching user: ${error.message}`);
+    }
+  }
 }

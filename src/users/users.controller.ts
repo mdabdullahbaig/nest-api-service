@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Get,
+  Param,
   Post,
   UsePipes,
   ValidationPipe,
@@ -33,5 +35,26 @@ export class UsersController {
   )
   async createUser(@Body() body: CreateUserDto): Promise<User> {
     return await this.usersService.createUser(body);
+  }
+
+  /**
+   * Handles GET requests to retrieve all users.
+   * Calls the service to fetch all user documents from the database.
+   * @returns Promise resolving to an array of user documents
+   */
+  @Get()
+  async findAllUsers(): Promise<User[]> {
+    return await this.usersService.findAllUsers();
+  }
+
+  /**
+   * Handles GET requests to retrieve a user by ID.
+   * Calls the service to fetch a user document by its unique identifier.
+   * @param id - The ID of the user to retrieve
+   * @returns Promise resolving to the user document with the specified ID
+   */
+  @Get(':id')
+  async getUserById(@Param('id') id: string): Promise<User> {
+    return await this.usersService.findUserById(id);
   }
 }

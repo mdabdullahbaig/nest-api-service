@@ -13,7 +13,7 @@ This project is a simple NestJS API service for managing products and users. It 
 ## Features
 
 - Product management (add, update, delete, retrieve products)
-- User management (create, retrieve users)
+- User management (create, retrieve single user, list all users)
 - RESTful API endpoints
 - In-memory storage for products
 - MongoDB integration for users
@@ -76,6 +76,7 @@ The `ProductController` in `src/product/product.controller.ts` exposes endpoints
 
 The `UsersController` in `src/users/users.controller.ts` exposes endpoints to manage users:
 
+- `GET /users` - Retrieve all users
 - `POST /users` - Create a new user
 - `GET /users/:id` - Retrieve a user by ID
 
