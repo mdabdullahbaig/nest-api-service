@@ -5,8 +5,8 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import configuration from './config/configuration';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
-import { ProductModule } from './product/product.module';
+import { UsersModule } from './users/users.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -25,8 +25,8 @@ import { ProductModule } from './product/product.module';
       database: configuration().pgDatabase,
       models: [],
     }),
-    UserModule,
-    ProductModule,
+    UsersModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

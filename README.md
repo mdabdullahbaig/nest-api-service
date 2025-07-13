@@ -8,13 +8,15 @@ A progressive Node.js framework for building efficient and scalable server-side 
 
 ## Description
 
-This project is a simple NestJS API service for managing products. It demonstrates basic CRUD operations using controllers, services, and models. The project uses TypeScript and follows NestJS best practices.
+This project is a simple NestJS API service for managing products and users. It demonstrates basic CRUD operations using controllers, services, and models. The project uses TypeScript and follows NestJS best practices.
 
 ## Features
 
 - Product management (add, update, delete, retrieve products)
+- User management (create, retrieve users)
 - RESTful API endpoints
 - In-memory storage for products
+- MongoDB integration for users
 
 ## Product Model
 
@@ -36,9 +38,29 @@ export class Product {
 }
 ```
 
-## Product Service
+## User Model
 
-The `ProductService` in `src/product/product.service.ts` provides methods to add, update, delete, and retrieve products, storing them in memory.
+The `User` model is defined in `src/users/entities/user.schema.ts`:
+
+```typescript
+@Schema()
+export class User {
+  @Prop({ required: true, unique: true, match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/ })
+  email: string;
+
+  @Prop({ required: true, minlength: 6 })
+  password: string;
+
+  @Prop({ required: true })
+  firstName: string;
+
+  @Prop({ required: true })
+  lastName: string;
+
+  @Prop({ required: false })
+  phone?: string;
+}
+```
 
 ## Product Controller
 
@@ -49,6 +71,13 @@ The `ProductController` in `src/product/product.controller.ts` exposes endpoints
 - `POST /products` - Add a new product
 - `PATCH /products/:id` - Update a product by ID
 - `DELETE /products/:id` - Delete a product by ID
+
+## Users Controller
+
+The `UsersController` in `src/users/users.controller.ts` exposes endpoints to manage users:
+
+- `POST /users` - Create a new user
+- `GET /users/:id` - Retrieve a user by ID
 
 ## Getting Started
 
@@ -97,6 +126,15 @@ src/
     product.model.ts
     product.module.ts
     product.service.ts
+  users/
+    users.controller.ts
+    users.controller.spec.ts
+    users.service.ts
+    users.module.ts
+    entities/
+      user.schema.ts
+    dto/
+      create-user.dto.ts
 ```
 
 ## Resources

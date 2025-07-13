@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ProductController } from './product.controller';
-import { ProductService } from './product.service';
+import { ProductController } from './products.controller';
+import { ProductService } from './products.service';
 
 /**
  * ProductModule is responsible for managing product-related components,
@@ -11,4 +11,4 @@ import { ProductService } from './product.service';
   controllers: [ProductController],
   providers: [ProductService],
 })
-export class ProductModule {}
+export class ProductsModule {}
