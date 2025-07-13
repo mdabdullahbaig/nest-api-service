@@ -12,7 +12,7 @@ This project is a simple NestJS API service for managing products. It demonstrat
 
 ## Features
 
-- Product management (add products)
+- Product management (add, update, delete, retrieve products)
 - RESTful API endpoints
 - In-memory storage for products
 
@@ -38,7 +38,7 @@ export class Product {
 
 ## Product Service
 
-The `ProductService` in `src/product/product.service.ts` provides methods to add products and stores them in memory.
+The `ProductService` in `src/product/product.service.ts` provides methods to add, update, delete, and retrieve products, storing them in memory.
 
 ## Product Controller
 
@@ -46,6 +46,9 @@ The `ProductController` in `src/product/product.controller.ts` exposes endpoints
 
 - `POST /products` - Add a new product
 - `GET /products` - Retrieve all products
+- `GET /products/:id` - Retrieve a product by ID
+- `PATCH /products/:id` - Update a product by ID
+- `DELETE /products/:id` - Delete a product by ID
 
 ## Getting Started
 
