@@ -76,8 +76,8 @@ The `ProductController` in `src/product/product.controller.ts` exposes endpoints
 
 The `UsersController` in `src/users/users.controller.ts` exposes endpoints to manage users:
 
-- `GET /users` - Retrieve all users
 - `POST /users` - Create a new user
+- `GET /users` - Retrieve all users
 - `GET /users/:id` - Retrieve a user by ID
 
 ## Getting Started
@@ -124,9 +124,10 @@ src/
   main.ts
   product/
     product.controller.ts
-    product.model.ts
-    product.module.ts
+    product.controller.spec.ts
     product.service.ts
+    product.module.ts
+    product.model.ts
   users/
     users.controller.ts
     users.controller.spec.ts
