@@ -44,9 +44,9 @@ The `ProductService` in `src/product/product.service.ts` provides methods to add
 
 The `ProductController` in `src/product/product.controller.ts` exposes endpoints to manage products:
 
-- `POST /products` - Add a new product
 - `GET /products` - Retrieve all products
 - `GET /products/:id` - Retrieve a product by ID
+- `POST /products` - Add a new product
 - `PATCH /products/:id` - Update a product by ID
 - `DELETE /products/:id` - Delete a product by ID
 
