@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProductService } from './product.service';
-import { ProductController } from './product.controller';
+import { ProductService } from './products.service';
+import { ProductController } from './products.controller';
 
 /**
  * Unit tests for ProductController

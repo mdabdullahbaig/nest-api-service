@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ProductService } from './product.service';
+import { ProductService } from './products.service';
 import { Product } from './product.model';
 
 /**
