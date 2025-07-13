@@ -22,6 +22,23 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   /**
+   * Handles POST requests to add a new product.
+   * @param productData - Object containing title, description, and price of the product
+   * @returns Object with the new product's id and a success message
+   */
+  @Post()
+  addProduct(
+    @Body() body: { title: string; description: string; price: number },
+  ): { id: number; message: string } {
+    const id = this.productService.addProduct(
+      body.title,
+      body.description,
+      body.price,
+    );
+    return { id, message: 'Product added successfully!' };
+  }
+
+  /**
    * Handles GET requests to retrieve all products.
    * @returns An object containing an array of all products
    */
@@ -40,23 +57,6 @@ export class ProductController {
   @Get(':id')
   getProduct(@Param('id') id: number): Product {
     return this.productService.getProduct(id);
-  }
-
-  /**
-   * Handles POST requests to add a new product.
-   * @param productData - Object containing title, description, and price of the product
-   * @returns Object with the new product's id and a success message
-   */
-  @Post()
-  addProduct(
-    @Body() body: { title: string; description: string; price: number },
-  ): { id: number; message: string } {
-    const id = this.productService.addProduct(
-      body.title,
-      body.description,
-      body.price,
-    );
-    return { id, message: 'Product added successfully!' };
   }
 
   /**

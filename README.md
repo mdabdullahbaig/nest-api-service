@@ -8,7 +8,7 @@ A progressive Node.js framework for building efficient and scalable server-side 
 
 ## Description
 
-This project is a simple NestJS API service for managing products and users. It demonstrates basic CRUD operations using controllers, services, and models. The project uses TypeScript and follows NestJS best practices.
+This project is a simple NestJS API service for managing products and users. It demonstrates basic CRUD operations using controllers, services, and models. The project uses TypeScript and follows NestJS best practices. Authentication is enforced for all product modification endpoints using a custom AuthMiddleware that checks for a Bearer token in the Authorization header.
 
 ## Features
 
@@ -17,60 +17,25 @@ This project is a simple NestJS API service for managing products and users. It 
 - RESTful API endpoints
 - In-memory storage for products
 - MongoDB integration for users
+- Authentication middleware for protected product routes
 
-## Product Model
+## Authentication
 
-The `Product` model is defined in `src/product/product.model.ts`:
+All product modification endpoints (POST, PATCH, DELETE) require a valid Bearer token in the Authorization header. GET requests to product endpoints are public. The AuthMiddleware checks for the presence and format of the token. Example:
 
-```typescript
-export class Product {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-
-  constructor(id: number, title: string, description: string, price: number) {
-    this.id = id;
-    this.title = title;
-    this.description = description;
-    this.price = price;
-  }
-}
-```
-
-## User Model
-
-The `User` model is defined in `src/users/entities/user.schema.ts`:
-
-```typescript
-@Schema()
-export class User {
-  @Prop({ required: true, unique: true, match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/ })
-  email: string;
-
-  @Prop({ required: true, minlength: 6 })
-  password: string;
-
-  @Prop({ required: true })
-  firstName: string;
-
-  @Prop({ required: true })
-  lastName: string;
-
-  @Prop({ required: false })
-  phone?: string;
-}
+```http
+Authorization: Bearer <your-token>
 ```
 
 ## Product Controller
 
 The `ProductController` in `src/product/product.controller.ts` exposes endpoints to manage products:
 
-- `GET /products` - Retrieve all products
-- `GET /products/:id` - Retrieve a product by ID
-- `POST /products` - Add a new product
-- `PATCH /products/:id` - Update a product by ID
-- `DELETE /products/:id` - Delete a product by ID
+- `GET /products` - Retrieve all products (public)
+- `GET /products/:id` - Retrieve a product by ID (public)
+- `POST /products` - Add a new product (protected)
+- `PATCH /products/:id` - Update a product by ID (protected)
+- `DELETE /products/:id` - Delete a product by ID (protected)
 
 ## Users Controller
 
@@ -137,7 +102,13 @@ src/
       user.schema.ts
     dto/
       create-user.dto.ts
+  middleware/
+    auth.middleware.ts
 ```
+
+## API Documentation
+
+See `swagger.yaml` for full OpenAPI documentation of all endpoints, request/response schemas, and authentication requirements.
 
 ## Resources
 

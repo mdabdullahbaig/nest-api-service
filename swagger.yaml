@@ -2,13 +2,13 @@ openapi: 3.0.0
 info:
   title: NestJS Product & User API
   version: 1.0.0
-  description: API documentation for managing products and users in the NestJS API Service
+  description: API documentation for managing products and users in the NestJS API Service. Product modification endpoints require Bearer token authentication via AuthMiddleware.
 servers:
   - url: http://localhost:3000
 paths:
   /products:
     get:
-      summary: Retrieve all products
+      summary: Retrieve all products (public)
       responses:
         '200':
           description: A list of products
@@ -22,7 +22,9 @@ paths:
                     items:
                       $ref: '#/components/schemas/Product'
     post:
-      summary: Add a new product
+      summary: Add a new product (protected)
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -43,7 +45,7 @@ paths:
                     type: string
   /products/{id}:
     get:
-      summary: Retrieve a product by ID
+      summary: Retrieve a product by ID (public)
       parameters:
         - name: id
           in: path
@@ -60,7 +62,9 @@ paths:
         '404':
           description: Product not found
     patch:
-      summary: Update a product by ID
+      summary: Update a product by ID (protected)
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -88,7 +92,9 @@ paths:
         '404':
           description: Product not found
     delete:
-      summary: Delete a product by ID
+      summary: Delete a product by ID (protected)
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -107,6 +113,21 @@ paths:
                     type: string
         '404':
           description: Product not found
+  /users:
+    get:
+      summary: Retrieve all users
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
     post:
       summary: Create a new user
       requestBody:
@@ -124,21 +145,6 @@ paths:
                 $ref: '#/components/schemas/User'
         '400':
           description: Validation error or user already exists
-  /users:
-    get:
-      summary: Retrieve all users
-      responses:
-        '200':
-          description: A list of users
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  users:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/User'
   /users/{id}:
     get:
       summary: Retrieve a user by ID
@@ -158,6 +164,11 @@ paths:
         '404':
           description: User not found
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     Product:
       type: object

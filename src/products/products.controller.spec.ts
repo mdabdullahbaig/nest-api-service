@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductService } from './products.service';
 import { ProductController } from './products.controller';
+import { AuthMiddleware } from '../middleware/auth.middleware';
+import { Request, Response, NextFunction } from 'express';
 
 /**
  * Unit tests for ProductController
@@ -22,6 +24,21 @@ describe('ProductController', () => {
 
   describe('root', () => {
     /**
+     * Should add a product and return its id and success message
+     */
+    it('should add a product', () => {
+      const productData = {
+        title: 'Test Product',
+        description: 'Test Description',
+        price: 100,
+      };
+      expect(productController.addProduct(productData)).toEqual({
+        id: expect.any(Number),
+        message: 'Product added successfully!',
+      });
+    });
+
+    /**
      * Should return all products after adding one
      */
     it('should return all products', () => {
@@ -42,6 +59,13 @@ describe('ProductController', () => {
           },
         ],
       });
+    });
+
+    /**
+     * Should return an empty array if no products are added
+     */
+    it('should return an empty array if no products are added', () => {
+      expect(productController.getAllProducts()).toEqual({ products: [] });
     });
 
     /**
@@ -73,21 +97,6 @@ describe('ProductController', () => {
       expect(() => productController.getProduct(999)).toThrow(
         'Product with id 999 not found',
       );
-    });
-
-    /**
-     * Should add a product and return its id and success message
-     */
-    it('should add a product', () => {
-      const productData = {
-        title: 'Test Product',
-        description: 'Test Description',
-        price: 100,
-      };
-      expect(productController.addProduct(productData)).toEqual({
-        id: expect.any(Number),
-        message: 'Product added successfully!',
-      });
     });
 
     /**
@@ -168,6 +177,68 @@ describe('ProductController', () => {
       expect(() => productController.deleteProduct(999)).toThrow(
         'Product with id 999 not found',
       );
+    });
+  });
+
+  describe('AuthMiddleware integration with ProductController', () => {
+    let middleware: AuthMiddleware;
+    let req: Partial<Request>;
+    let res: Partial<Response>;
+    let next: NextFunction;
+
+    beforeEach(() => {
+      middleware = new AuthMiddleware();
+      req = { headers: {} } as Partial<Request>;
+      res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+      next = jest.fn();
+    });
+
+    it('should return 401 if Authorization header does not start with Bearer for protected product route', () => {
+      req.headers = req.headers || {};
+      req.headers['authorization'] = 'Basic abc123';
+      middleware.use(req as Request, res as Response, next);
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Unauthorized' });
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    it('should call next if Authorization header is valid Bearer token for protected product route', () => {
+      req.headers = req.headers || {};
+      req.headers['authorization'] = 'Bearer validtoken';
+      middleware.use(req as Request, res as Response, next);
+      expect(next).toHaveBeenCalled();
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+
+    it('should block POST requests to /products without Authorization header', () => {
+      req.method = 'POST';
+      req.url = '/products';
+      middleware.use(req as Request, res as Response, next);
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Unauthorized' });
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    it('should block PATCH requests to /products/:id without Authorization header', () => {
+      req.method = 'PATCH';
+      req.url = '/products/1';
+      middleware.use(req as Request, res as Response, next);
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Unauthorized' });
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    it('should block DELETE requests to /products/:id without Authorization header', () => {
+      req.method = 'DELETE';
+      req.url = '/products/1';
+      middleware.use(req as Request, res as Response, next);
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Unauthorized' });
+      expect(next).not.toHaveBeenCalled();
     });
   });
 });
