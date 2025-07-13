@@ -124,5 +124,31 @@ describe('UsersController', () => {
       ).rejects.toThrow(BadRequestException);
       expect(mockUsersService.createUser).toHaveBeenCalledWith(invalidDto);
     });
+
+    /**
+     * Should throw validation error if extra fields are provided
+     */
+    it('should throw validation error if extra fields are provided', async () => {
+      // DTO with an extra field not defined in CreateUserDto
+      const invalidDto: any = {
+        email: 'test.mail@gmail.com',
+        password: 'Test@123',
+        firstName: 'Test',
+        lastName: 'Mail',
+        phone: '9876543210',
+        extraField: 'unexpected', // extra field
+      };
+      // Simulate service throwing a validation error
+      mockUsersService.createUser.mockRejectedValue(
+        new BadRequestException(
+          'Validation failed: extra fields are not allowed',
+        ),
+      );
+
+      await expect(
+        usersController.createUser(invalidDto as CreateUserDto),
+      ).rejects.toThrow(BadRequestException);
+      expect(mockUsersService.createUser).toHaveBeenCalledWith(invalidDto);
+    });
   });
 });

@@ -24,7 +24,13 @@ export class UsersController {
    * @returns Promise resolving to the created user document
    */
   @Post()
-  @UsePipes(new ValidationPipe())
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
   async createUser(@Body() body: CreateUserDto): Promise<User> {
     return await this.usersService.createUser(body);
   }
